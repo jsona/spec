@@ -8,9 +8,9 @@ JSONA = JSON (less grammatical restrictions) + Annotation.
   - [Introduction](#introduction)
   - [Difference from JSON](#difference-from-json)
     - [Support comments](#support-comments)
-    - [Omit double quotes on prop key](#omit-double-quotes-on-prop-key)
+    - [Free choose quota on prop key](#free-choose-quota-on-prop-key)
     - [Allow extra trailing commas](#allow-extra-trailing-commas)
-    - [Floating point numbers allow only integer part or fractional part](#floating-point-numbers-allow-only-integer-part-or-fractional-part)
+    - [Omit part of floating point numbers](#omit-part-of-floating-point-numbers)
     - [Multiple bases support](#multiple-bases-support)
     - [Support single quote and back quote](#support-single-quote-and-back-quote)
     - [Multi-line string](#multi-line-string)
@@ -23,7 +23,7 @@ JSONA = JSON (less grammatical restrictions) + Annotation.
 
 ## Introduction
 
-JSON is a very friendly format for exchanging and describing data, but it does not carry logic and calculations. Annotation is an elegant way to insert logic into JSON. see [Motivation](docs/Motivation.md)
+JSON is a very friendly format for exchanging and describing data, but it does not carry logic and calculations. Annotation is an elegant way to insert logic into JSON. see [motivation](docs/motivation.md)
 
 Data and logic are splitted, and they coexist in a harmonious way.
 
@@ -46,12 +46,14 @@ JSONA is a superset of JSON. JSONA has the following changes based on JSON
 }
 ```
 
-### Omit double quotes on prop key
+### Free choose quota on prop key
 
 ```
 {
   "a": 1,
   b: 2,
+  'a': 3,
+  `a`: 4,
 }
 ```
 
@@ -68,7 +70,7 @@ JSONA is a superset of JSON. JSONA has the following changes based on JSON
 }
 ```
 
-### Floating point numbers allow only integer part or fractional part
+### Omit part of floating point numbers
 
 ```
 {
@@ -125,7 +127,7 @@ The annotation is marked with `@`, followed by a variable name.
 
 ### Position
 
-- Except for `key: value,` and `value,` between colons and commas, comments can appear anywhere
+Where you can insert comments, you can insert annotations.
 
 ```
 @anno
