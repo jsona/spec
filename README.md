@@ -1,20 +1,24 @@
 # JSONA
 
+Read this in other languages: [中文](./README.zh-CN.md)
+
 JSONA = JSON (less grammatical restrictions) + Annotation.
 
 - [JSONA](#jsona)
   - [Motivation](#motivation)
-  - [与JSON区别](#与json区别)
-    - [支持注释](#支持注释)
-    - [属性名可省略双引号](#属性名可省略双引号)
-    - [允许多余尾逗号](#允许多余尾逗号)
-    - [浮点数允许只有整数部分或小数部分](#浮点数允许只有整数部分或小数部分)
-    - [多种进制支持](#多种进制支持)
-    - [支持单引号和反引号](#支持单引号和反引号)
-    - [多行字符串](#多行字符串)
-    - [转义字符串](#转义字符串)
-    - [注解](#注解)
-  - [示例](#示例)
+  - [Difference from JSON](#difference-from-json)
+    - [Support comments](#support-comments)
+    - [Omit double quotes on prop key](#omit-double-quotes-on-prop-key)
+    - [Allow extra trailing commas](#allow-extra-trailing-commas)
+    - [Floating point numbers allow only integer part or fractional part](#floating-point-numbers-allow-only-integer-part-or-fractional-part)
+    - [Multiple bases support](#multiple-bases-support)
+    - [Support single quote and back quote](#support-single-quote-and-back-quote)
+    - [Multi-line string](#multi-line-string)
+    - [Escape string](#escape-string)
+  - [Annotation](#annotation)
+    - [Position](#position)
+    - [Parameters](#parameters)
+  - [Example](#example)
 
 ## Motivation
 

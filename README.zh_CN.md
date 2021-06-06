@@ -1,5 +1,7 @@
 # JSONA
 
+其他语言版本: [English](./README.md)
+
 JSONA = JSON(更少语法限制) + Annotation(注解)。
 
 - [JSONA](#jsona)
