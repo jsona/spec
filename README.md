@@ -5,7 +5,7 @@ Read this in other languages: [中文](./README.zh-CN.md)
 JSONA = JSON (less grammatical restrictions) + Annotation.
 
 - [JSONA](#jsona)
-  - [Motivation](#motivation)
+  - [Introduction](#introduction)
   - [Difference from JSON](#difference-from-json)
     - [Support comments](#support-comments)
     - [Omit double quotes on prop key](#omit-double-quotes-on-prop-key)
@@ -20,80 +20,10 @@ JSONA = JSON (less grammatical restrictions) + Annotation.
     - [Parameters](#parameters)
   - [Example](#example)
 
-## Motivation
 
-JSON is a very friendly format for exchanging and describing data, but it does not carry logic and calculations. Annotation is an elegant way to insert logic into JSON.
+## Introduction
 
-See the following example
-```
-{
-  "login": {
-    "route": "POST /login",
-    "req": {
-      "body": {
-        "user": "Alice",
-        "pass": "a123456"
-      }
-    },
-    "res": {
-      "200": {
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp...",
-      }
-    }
-  }
-}
-```
-
-The data is rest api.
-
-If we want to turn it into a Swagger/OpenAPI specification interface document, we can add the following annotations
-
-```
-{
-  "login": { @endpoint({summary:"登录",security:[]})
-    "route": "POST /login",
-    "req": {
-      "body": {
-        "user": "Alice", @description("用户名")
-        "pass": "a123456" @description("密码")
-      }
-    },
-    "res": {
-      "200": {
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp..." @description("JWT令牌")
-    }
-  }
-}
-```
-
-> [jsona-openapi](https://github.com/sigoden/jsona-openapi)　The above functions are implemented, and annotations are provided to convert an interface data description into an OpenApi document.
-
-
-If I want to turn it into a test case, we can add the following annotation
-
-```
-{
-  "login": { @describe("测试登录") @client("http")
-    "route": "POST /login",
-    "req": {
-      "body": {
-        "user": "Alice", 
-        "pass": "a123456"
-      }
-    },
-    "res": {
-      "200": { @partial
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp...", @type
-      }
-    }
-  }
-}
-```
-
-> [apitest](https://github.com/sigoden/apitest) The above functions are implemented, and annotations are provided to treat an interface description as a test case.
-
-
-The data is same. We have different understandings and purposes of the data, so we provide and implement different annotations.
+JSON is a very friendly format for exchanging and describing data, but it does not carry logic and calculations. Annotation is an elegant way to insert logic into JSON. see [Motivation](docs/Motivation.md)
 
 Data and logic are splitted, and they coexist in a harmonious way.
 
@@ -108,11 +38,11 @@ JSONA is a superset of JSON. JSONA has the following changes based on JSON
 
 ```
 /**
- 多行
+ multiple lines comment
 */
-// 单行注释
+// single line  comment
 {
-  @anno /* 内链注释 */ @anno
+  @anno /* inline comment */ @anno
 }
 ```
 

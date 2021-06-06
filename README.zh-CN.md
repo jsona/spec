@@ -2,10 +2,9 @@
 
 其他语言版本: [English](./README.md)
 
-JSONA = JSON(更少语法限制) + Annotation(注解)。
 
 - [JSONA](#jsona)
-  - [动机](#动机)
+  - [介绍](#介绍)
   - [与JSON区别](#与json区别)
     - [支持注释](#支持注释)
     - [属性名可省略双引号](#属性名可省略双引号)
@@ -20,79 +19,11 @@ JSONA = JSON(更少语法限制) + Annotation(注解)。
     - [参数](#参数)
   - [示例](#示例)
 
-## 动机
+## 介绍
+
+JSONA = JSON(更少语法限制) + Annotation(注解)。
 
 JSON是一种很友好的描述数据的格式，但它不承载逻辑和计算。 而Annotation就是一种优雅插入逻辑到JSON的方式。
-
-看如下例子
-```
-{
-  "login": {
-    "route": "POST /login",
-    "req": {
-      "body": {
-        "user": "Alice",
-        "pass": "a123456"
-      }
-    },
-    "res": {
-      "200": {
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp...",
-      }
-    }
-  }
-}
-```
-
-这串数据我们描述了一个接口。
-
-如果我们想把它变成一个Swagger/OpenAPI规范的接口文档，我们可以加入如下注解
-
-```
-{
-  "login": { @endpoint({summary:"登录",security:[]})
-    "route": "POST /login",
-    "req": {
-      "body": {
-        "user": "Alice", @description("用户名")
-        "pass": "a123456" @description("密码")
-      }
-    },
-    "res": {
-      "200": {
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp..." @description("JWT令牌")
-    }
-  }
-}
-```
-
-> [jsona-openapi](https://github.com/sigoden/jsona-openapi)　实现了上面的功能，提供注解将一个接口数据描述转成OpenApi文档。
-
-
-如果我想把它变成测试用例，我们可以加入如下注解
-
-```
-{
-  "login": { @describe("测试登录") @client("http")
-    "route": "POST /login",
-    "req": {
-      "body": {
-        "user": "Alice", 
-        "pass": "a123456"
-      }
-    },
-    "res": {
-      "200": { @partial
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp...", @type
-      }
-    }
-  }
-}
-```
-
-> [apitest](https://github.com/sigoden/apitest) 实现了上面功能，提供注解将一个接口描述当成测试用例。
-
-数据还是类似的数据，我们对数据有不同的理解和目的，就提供和实现不同的注解。
 
 数据和逻辑是对立的，有以一种和谐的方式共存。
 
