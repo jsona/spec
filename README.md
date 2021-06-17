@@ -19,6 +19,7 @@ JSONA = JSON (less grammatical restrictions) + Annotation.
     - [Position](#position)
     - [Parameters](#parameters)
   - [Example](#example)
+  - [Related Project](#related-project)
 
 
 ## Introduction
@@ -222,3 +223,9 @@ xyz`,
 }
 
 ```
+
+## Related Project
+
+- [apitest](https://github.com/sigoden/apitest.git) - declarative api testing tool.
+- [jsona-openapi](https://github.com/sigoden/jsona-openapi) - write openapi in jsona.
+- [vscode-jsona](https://marketplace.visualstudio.com/items?itemName=sigoden.vscode-jsona) - vscode extension for jsona.

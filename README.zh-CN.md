@@ -18,6 +18,7 @@
     - [位置](#位置)
     - [参数](#参数)
   - [示例](#示例)
+  - [相关项目](#相关项目)
 
 ## 介绍
 
@@ -222,3 +223,9 @@ xyz`,
 }
 
 ```
+
+## 相关项目
+
+- [apitest](https://github.com/sigoden/apitest.git) - 自动化测试工具
+- [jsona-openapi](https://github.com/sigoden/jsona-openapi) - openapi dsl
+- [vscode-jsona](https://marketplace.visualstudio.com/items?itemName=sigoden.vscode-jsona) - vscode扩展
