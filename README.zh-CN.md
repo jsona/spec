@@ -2,10 +2,10 @@
 
 其他语言版本: [English](./README.md)
 
-
 - [JSONA](#jsona)
   - [介绍](#介绍)
-  - [与JSON区别](#与json区别)
+  - [示例](#示例)
+  - [JSON](#json)
     - [支持注释](#支持注释)
     - [属性名随意使用引号](#属性名随意使用引号)
     - [允许多余尾逗号](#允许多余尾逗号)
@@ -15,25 +15,84 @@
     - [多行字符串](#多行字符串)
     - [转义字符串](#转义字符串)
   - [注解](#注解)
-    - [位置](#位置)
-    - [参数](#参数)
-  - [示例](#示例)
+    - [插入位置](#插入位置)
+    - [注解值](#注解值)
   - [相关项目](#相关项目)
 
 ## 介绍
 
-JSONA = JSON(更少语法限制) + Annotation(注解)。
+JSONA = JSON + Annotation。JSON 描述数据，Annotation 承载逻辑。
 
-JSON是一种很友好的描述数据的格式，但它不承载逻辑和计算。 而Annotation就是一种优雅插入逻辑到JSON的方式。
+## 示例
 
-数据和逻辑是对立的，有以一种和谐的方式共存。
+下面的示例涵盖了 JSONA 的所有特性。
 
-因为JSON是一种纯数据交换的格式，所以它的语法要求很严厉。JSONA是给提供注解的解析引擎使用的，语法不需要太严厉。
+```
+/*
+ multiple line comment
+*/
 
+// single line comment
 
-## 与JSON区别
+{
+    @foo /* abc */ @optional
+    @null(null) // single line comment
+    @bool(true)
+    @float(3.14)
+    @number(-3)
+    @string('abc "def" ghi')
+    @array([3,4])
+    @object({
+        k1: "v1",
+        k2: "v2",
+    })
 
-JSONA 是JSON的超集。JSONA 在JSON的基础上，有如下改动
+    nullValue: /* xyz */ null,
+    boolTrue: true,
+    boolFalse: false,
+    float: 3.14,
+    floatNegative: -3.14,
+    floatNegativeWithoutInteger: -.14,
+    floatNegativeWithoutDecimal: -3.,
+    integer: 3,
+    hex: 0x1a,
+    binary: 0b01,
+    octal: 0o12,
+    integerNegative: -3,
+    stringSingleQuota: 'abc "def" ghi',
+    stringDoubleQuota: "abc 'def' ghi",
+    stringBacktick: `abc
+def \`
+xyz`,
+    stringEscape1: '\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}',
+    stringEscape2: "\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}",
+    stringEscape3: `\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}`,
+    arrayEmpty: [], 
+    arrayEmptyMultiLine: [ @array
+    ],
+    arrayEmptyWithAnnotation: [],  // @array
+    arraySimple: [ @array
+        "a", @upper
+        "b",
+    ],
+    arrayOnline: ["a", "b"], @array
+    arrayExtraComma: ["a", "b",],
+    objectEmpty: {},
+    objectEmptyMultiLine: { @object
+    },
+    objectEmptyWithAnnotation: {}, @use("Object4")
+    objectSimple: { @save("Object4")
+        k1: "v1", @upper
+        k2: "v2",
+    },
+    objectOneLine: { k1: "v1", k2: "v2" }, @object
+    objectExtraComma: { k1: "v1", k2: "v2", },
+}
+```
+
+## JSON
+
+JSONA 是 JSON 的超集，借鉴 ECMAScript 的语法缓解 JSON 的一些限制。
 
 ### 支持注释
 
@@ -43,7 +102,7 @@ JSONA 是JSON的超集。JSONA 在JSON的基础上，有如下改动
 */
 // 单行注释
 {
-  @anno /* 内链注释 */ @anno
+  @anno /* 内联注释 */ @anno
 }
 ```
 
@@ -76,7 +135,8 @@ JSONA 是JSON的超集。JSONA 在JSON的基础上，有如下改动
 ```
 {
   a: 3.,
-  b: .3,
+  b: .1,
+  c: 3.1,
 }
 ```
 
@@ -87,7 +147,7 @@ JSONA 是JSON的超集。JSONA 在JSON的基础上，有如下改动
   integer: 3,
   hex: 0x1a,
   binary: 0b01,
-  otcal: 0o12,
+  octal: 0o12,
 }
 ```
 
@@ -116,22 +176,20 @@ JSONA 是JSON的超集。JSONA 在JSON的基础上，有如下改动
 ```
 {
   x: '\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}', // 单引号
-  y: '\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}', // 反引号
   z: "\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}", // 双引号
+  y: '\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}', // 反引号
 }
 ```
 
-
 ## 注解
 
-注解有`@`标记，接一个变量名。
+注解由 `@` 标记，接一个变量名。注解可以带值，也可以不带。
 
-### 位置
+### 插入位置
 
-能插入注释的地方，都能插入注解
+下面列出了 JSONA 中所有注解的地方：
 
 ```
-@anno
 { @anno 
   @anno
   v1: 1, @anno
@@ -140,17 +198,20 @@ JSONA 是JSON的超集。JSONA 在JSON的基础上，有如下改动
   v4: [ @anno
   ],
   v5: [
-    @anno
-  ],
-  v6: [
   ], @anno
+  v6: { @anno
+  },
+  v7: {
+  }, @anno
 } @anno
 @anno
 ```
 
-### 参数
+### 注解值
 
-注解可以带参数，其参数是不带注解的JSONA。即注解不能嵌套注解。
+注解值必须用圆括号包起来，但可以省略。
+
+注解值必须是有效的但不带注解的JSONA，注解值不能嵌套注解值。
 
 ```
 @anno
@@ -165,67 +226,9 @@ JSONA 是JSON的超集。JSONA 在JSON的基础上，有如下改动
 @anno({a:3})
 ```
 
-## 示例
-
-```
-// single line comment
-
-{
-    @foo /* abc */ @optional
-    @null(null) // single line comment
-    @bool(true)
-    @float(3.14)
-    @number(-3)
-    @string('abc "def" ghi')
-    @array([3,4])
-    @object({k: "v"})
-
-    nullValue: null,
-    boolTrue: true,
-    boolFale: false,
-    float: 3.14,
-    floatNegative: -3.14,
-    floatNegativeWithoutInteger: -.14,
-    floatNegativeWithoutDecimal: -3.,
-    integer: 3,
-    hex: 0x1a,
-    binary: 0b01,
-    otcal: 0o12,
-    integerNegative: -3,
-    stringSingleQuota: 'abc "def" ghi',
-    stringDoubleQuota: "abc 'def' ghi",
-    stringBacktick: `abc
-def \`
-xyz`,
-    stringEscaple1: '\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}',
-    stringEscaple2: "\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}",
-    stringEscaple3: `\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}`,
-    arrayEmpty: [], 
-    arrayEmptyMultiLine: [ @array
-    ],
-    arrayEmptyWithAnnotation: [],  // @array
-    arraySimple: [ @array
-        "a", @upper
-        "b",
-    ],
-    arrayOneline: ["a", "b"], @array
-    arrayExtraComma: ["a", "b",],
-    objectEmpty: {},
-    objectEmptyMultiLine: { @object
-    },
-    objectEmptyWithAnnotation: {}, @use("Object4")
-    objectSimple: { @save("Object4")
-        k1: "v1", @upper
-        k2: "v2",
-    },
-    objectOneLine: { k1: "v1", k2: "v2" }, @object
-    objectExtraComma: { k1: "v1", k2: "v2", },
-}
-
-```
-
 ## 相关项目
 
-- [apitest](https://github.com/sigoden/apitest.git) - 自动化测试工具
+- [jsona](https://github.com/jsona/jsona.git) - JSONA 工具箱, 包括解析器、cli、lsp。
+- [apitest](https://github.com/sigoden/apitest.git) - 自动化接口测试
 - [jsona-openapi](https://github.com/sigoden/jsona-openapi) - openapi dsl
-- [vscode-jsona](https://marketplace.visualstudio.com/items?itemName=sigoden.vscode-jsona) - vscode扩展
+- [vscode-jsona-syntax](https://marketplace.visualstudio.com/items?itemName=sigoden.vscode-jsona) - vscode语法扩展

@@ -2,40 +2,100 @@
 
 Read this in other languages: [中文](./README.zh-CN.md)
 
-JSONA = JSON (less grammatical restrictions) + Annotation.
-
 - [JSONA](#jsona)
   - [Introduction](#introduction)
-  - [Difference from JSON](#difference-from-json)
-    - [Support comments](#support-comments)
-    - [Free choose quota on prop key](#free-choose-quota-on-prop-key)
+  - [Example](#example)
+  - [JSON](#json)
+    - [Support for comments](#support-for-comments)
+    - [Use quotes freely on property key](#use-quotes-freely-on-property-key)
     - [Allow extra trailing commas](#allow-extra-trailing-commas)
     - [Omit part of floating point numbers](#omit-part-of-floating-point-numbers)
     - [Multiple bases support](#multiple-bases-support)
-    - [Support single quote and back quote](#support-single-quote-and-back-quote)
+    - [Support single quotes and backtick quotes](#support-single-quotes-and-backtick-quotes)
     - [Multi-line string](#multi-line-string)
     - [Escape string](#escape-string)
   - [Annotation](#annotation)
-    - [Position](#position)
-    - [Parameters](#parameters)
-  - [Example](#example)
+    - [Insert position](#insert-position)
+    - [Annotation value](#annotation-value)
   - [Related Project](#related-project)
 
 
 ## Introduction
 
-JSON is a very friendly format for exchanging and describing data, but it does not carry logic and calculations. Annotation is an elegant way to insert logic into JSON. see [motivation](docs/motivation.md)
+JSONA = JSON + Annotation. JSON describes the data, Annotation describes the logic.
 
-Data and logic are splitted, and they coexist in a harmonious way.
+## Example
 
-Because JSON is a pure data exchange format, its grammatical requirements are very strict. JSONA is used for parsing engines that provide annotations, and the syntax does not need to be too strict.
+The examples below cover all the features of JSONA.
 
+```
+/*
+ multiple line comment
+*/
 
-## Difference from JSON
+// single line comment
 
-JSONA is a superset of JSON. JSONA has the following changes based on JSON
+{
+    @foo /* abc */ @optional
+    @null(null) // single line comment
+    @bool(true)
+    @float(3.14)
+    @number(-3)
+    @string('abc "def" ghi')
+    @array([3,4])
+    @object({
+        k1: "v1",
+        k2: "v2",
+    })
 
-### Support comments
+    nullValue: /* xyz */ null,
+    boolTrue: true,
+    boolFalse: false,
+    float: 3.14,
+    floatNegative: -3.14,
+    floatNegativeWithoutInteger: -.14,
+    floatNegativeWithoutDecimal: -3.,
+    integer: 3,
+    hex: 0x1a,
+    binary: 0b01,
+    octal: 0o12,
+    integerNegative: -3,
+    stringSingleQuota: 'abc "def" ghi',
+    stringDoubleQuota: "abc 'def' ghi",
+    stringBacktick: `abc
+def \`
+xyz`,
+    stringEscape1: '\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}',
+    stringEscape2: "\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}",
+    stringEscape3: `\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}`,
+    arrayEmpty: [], 
+    arrayEmptyMultiLine: [ @array
+    ],
+    arrayEmptyWithAnnotation: [],  // @array
+    arraySimple: [ @array
+        "a", @upper
+        "b",
+    ],
+    arrayOnline: ["a", "b"], @array
+    arrayExtraComma: ["a", "b",],
+    objectEmpty: {},
+    objectEmptyMultiLine: { @object
+    },
+    objectEmptyWithAnnotation: {}, @use("Object4")
+    objectSimple: { @save("Object4")
+        k1: "v1", @upper
+        k2: "v2",
+    },
+    objectOneLine: { k1: "v1", k2: "v2" }, @object
+    objectExtraComma: { k1: "v1", k2: "v2", },
+}
+```
+
+## JSON
+
+JSONA is a superset of JSON, borrowing the syntax of ECMAScript to alleviate some of the limitations of JSON.
+
+### Support for comments
 
 ```
 /**
@@ -47,7 +107,7 @@ JSONA is a superset of JSON. JSONA has the following changes based on JSON
 }
 ```
 
-### Free choose quota on prop key
+### Use quotes freely on property key
 
 ```
 {
@@ -76,7 +136,8 @@ JSONA is a superset of JSON. JSONA has the following changes based on JSON
 ```
 {
   a: 3.,
-  b: .3,
+  b: .1,
+  c: 3.1,
 }
 ```
 
@@ -87,11 +148,11 @@ JSONA is a superset of JSON. JSONA has the following changes based on JSON
   integer: 3,
   hex: 0x1a,
   binary: 0b01,
-  otcal: 0o12,
+  octal: 0o12,
 }
 ```
 
-### Support single quote and back quote
+### Support single quotes and backtick quotes
 
 ```
 {
@@ -115,23 +176,22 @@ JSONA is a superset of JSON. JSONA has the following changes based on JSON
 
 ```
 {
-  x: '\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}', // 单引号
-  y: '\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}', // 反引号
-  z: "\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}", // 双引号
+  x: '\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}', // single quote
+  y: "\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}", // double quote
+  z: `\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}`, // backtick quote
 }
 ```
 
 
 ## Annotation
 
-The annotation is marked with `@`, followed by a variable name.
+Annotations are marked with `@` followed by a variable name. Annotations may or may not have value.
 
-### Position
+### Insert position
 
-Where you can insert comments, you can insert annotations.
+Here's a list of where all the annotations are in JSONA:
 
 ```
-@anno
 { @anno 
   @anno
   v1: 1, @anno
@@ -148,9 +208,11 @@ Where you can insert comments, you can insert annotations.
 @anno
 ```
 
-### Parameters
+### Annotation value
 
-Annotations can take parameters, and the parameters are JSONA without annotations. That is, annotations cannot be nested annotations.
+Annotation values ​​must be enclosed in parentheses, but can be omitted.
+
+Annotation values ​​must be valid but no annotation JSONA, annotation values ​​cannot nest annotation values.
 
 ```
 @anno
@@ -165,67 +227,10 @@ Annotations can take parameters, and the parameters are JSONA without annotation
 @anno({a:3})
 ```
 
-## Example
-
-```
-// single line comment
-
-{
-    @foo /* abc */ @optional
-    @null(null) // single line comment
-    @bool(true)
-    @float(3.14)
-    @number(-3)
-    @string('abc "def" ghi')
-    @array([3,4])
-    @object({k: "v"})
-
-    nullValue: null,
-    boolTrue: true,
-    boolFale: false,
-    float: 3.14,
-    floatNegative: -3.14,
-    floatNegativeWithoutInteger: -.14,
-    floatNegativeWithoutDecimal: -3.,
-    integer: 3,
-    hex: 0x1a,
-    binary: 0b01,
-    otcal: 0o12,
-    integerNegative: -3,
-    stringSingleQuota: 'abc "def" ghi',
-    stringDoubleQuota: "abc 'def' ghi",
-    stringBacktick: `abc
-def \`
-xyz`,
-    stringEscaple1: '\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}',
-    stringEscaple2: "\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}",
-    stringEscaple3: `\0\b\f\n\r\t\u000b\'\\\xA9\u00A9\u{2F804}`,
-    arrayEmpty: [], 
-    arrayEmptyMultiLine: [ @array
-    ],
-    arrayEmptyWithAnnotation: [],  // @array
-    arraySimple: [ @array
-        "a", @upper
-        "b",
-    ],
-    arrayOneline: ["a", "b"], @array
-    arrayExtraComma: ["a", "b",],
-    objectEmpty: {},
-    objectEmptyMultiLine: { @object
-    },
-    objectEmptyWithAnnotation: {}, @use("Object4")
-    objectSimple: { @save("Object4")
-        k1: "v1", @upper
-        k2: "v2",
-    },
-    objectOneLine: { k1: "v1", k2: "v2" }, @object
-    objectExtraComma: { k1: "v1", k2: "v2", },
-}
-
-```
-
 ## Related Project
 
+
+- [jsona](https://github.com/jsona/jsona.git) - JSONA Toolbox, includes parser, cli, lsp.
 - [apitest](https://github.com/sigoden/apitest.git) - declarative api testing tool.
 - [jsona-openapi](https://github.com/sigoden/jsona-openapi) - write openapi in jsona.
 - [vscode-jsona](https://marketplace.visualstudio.com/items?itemName=sigoden.vscode-jsona) - vscode extension for jsona.
